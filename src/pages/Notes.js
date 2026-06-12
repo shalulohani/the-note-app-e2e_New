@@ -1,16 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 function Notes() {
   const navigate = useNavigate();
 
-  // ✅ Safely load notes from localStorage
+  // Load notes from localStorage
   const [notes, setNotes] = useState(() => {
     const savedNotes = JSON.parse(localStorage.getItem("notes"));
     return savedNotes || [];
   });
 
-  // ✅ Add a new note (temporary demo)
+  // Add a new note
   const addNote = () => {
     const newNote = { title: `Note ${notes.length + 1}`, content: "Sample content" };
     const updatedNotes = [...notes, newNote];
@@ -18,7 +18,7 @@ function Notes() {
     localStorage.setItem("notes", JSON.stringify(updatedNotes));
   };
 
-  // ✅ Logout logic
+  // Logout logic
   const handleLogout = () => {
     localStorage.removeItem("user");
     alert("Logged out successfully");
