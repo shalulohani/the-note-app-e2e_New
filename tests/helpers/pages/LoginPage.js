@@ -14,5 +14,8 @@ export class LoginPage {
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
+
+    // Wait for navigation to Notes page
+    await this.page.waitForURL('**/notes', { timeout: 15000 });
   }
 }
