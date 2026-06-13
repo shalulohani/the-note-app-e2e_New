@@ -1,33 +1,34 @@
+import { expect } from '@playwright/test';
+
 export class NotesPage {
   constructor(page) {
     this.page = page;
-    this.addNoteButton = page.locator('button:has-text("Add Note")');
-    this.noteItems = page.locator('li');
+
+    this.addNoteButton = page.getByRole('button', { name: 'Add Note' });
+    this.editButtons = page.getByRole('button', { name: 'Edit' });
+
+    this.titleInput = page.locator('input[placeholder="Enter note title"]');
+    this.contentTextarea = page.locator('textarea[placeholder="Enter note content"]');
+    this.saveButton = page.getByRole('button', { name: 'Save' });
   }
 
   async goto() {
-    await this.page.goto('https://pass-the-note-app.vercel.app/notes');
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.goto('http://localhost:3001/notes');
   }
 
-  async addNote() {
-    await this.addNoteButton.waitFor({ state: 'visible', timeout: 10000 });
+  async addNote(title = 'Test Note', content = 'Test Content') {
     await this.addNoteButton.click();
+    await this.titleInput.fill(title);
+    await this.contentTextarea.fill(content);
+    await this.saveButton.click();
   }
 
-  async editFirstNote(newText = 'Edited content') {
-    const firstNote = this.noteItems.first();
+  async editFirstNote(newTitle = 'Edited Note', newContent = 'Edited Content') {
+    await this.editButtons.first().click();
+    await this.titleInput.fill(newTitle);
+    await this.contentTextarea.fill(newContent);
+    await this.saveButton.click();
 
-    // Wait for the first note to appear
-    await firstNote.waitFor({ state: 'visible', timeout: 10000 });
-
-    // Click to open the note
-    await firstNote.click();
-
-    // Locate editable field inside the note
-    const textArea = firstNote.locator('textarea, input, p[contenteditable="true"]');
-
-    await textArea.waitFor({ state: 'visible', timeout: 10000 });
-    await textArea.fill(newText);
+    await expect(this.page.locator(`h3:has-text("${newTitle}")`)).toBeVisible();
   }
 }

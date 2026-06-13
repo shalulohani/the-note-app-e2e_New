@@ -1,20 +1,22 @@
-const { test, expect } = require('@playwright/test');
-const { LoginPage } = require('./helpers/pages/LoginPage');
-const { NotesPage } = require('./helpers/pages/NotesPage');
+import { test } from '@playwright/test';
+import { LoginPage } from './helpers/pages/LoginPage.js';
+import { NotesPage } from './helpers/pages/NotesPage.js';
+
+test.beforeEach(async ({ page }) => {
+  const login = new LoginPage(page);
+  await login.goto();
+  await login.login('test@example.com', 'password123');
+});
+
+test('User should be able to add a note', async ({ page }) => {
+  const notes = new NotesPage(page);
+  await notes.goto();
+  await notes.addNote();
+});
 
 test('User should be able to edit the first note', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  const notesPage = new NotesPage(page);
-
-  // Login first
-  await loginPage.login('demo@example.com', 'demo123');
-
-  // Wait for notes list
-  await page.waitForSelector('.note-item:first-child', { timeout: 15000 });
-
-  // Edit the first note
-  await notesPage.editFirstNote('Updated note text');
-
-  // Verify the change
-  await expect(page.locator('.note-item:first-child')).toContainText('Updated note text');
+  const notes = new NotesPage(page);
+  await notes.goto();
+  await notes.addNote('Original Note');
+  await notes.editFirstNote();
 });
