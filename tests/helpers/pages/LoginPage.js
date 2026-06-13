@@ -1,22 +1,23 @@
-import { expect } from '@playwright/test';
-
+// tests/helpers/pages/LoginPage.js
 export class LoginPage {
   constructor(page) {
     this.page = page;
-    this.emailInput = this.page.getByPlaceholder('Enter email');
-    this.passwordInput = this.page.getByPlaceholder('Enter password');
-    this.loginButton = this.page.getByRole('button', { name: 'Login' });
+    this.emailInput = 'input[name="email"]';
+    this.passwordInput = 'input[name="password"]';
+    this.loginButton = 'button[type="submit"]';
   }
 
   async goto() {
-    await this.page.goto('http://localhost:3001/login');
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.goto('/');
   }
 
   async login(email, password) {
-    await this.emailInput.fill(email);
-    await this.passwordInput.fill(password);
-    await this.loginButton.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForSelector(this.emailInput, { state: 'visible', timeout: 60000 });
+    await this.page.fill(this.emailInput, email);
+
+    await this.page.waitForSelector(this.passwordInput, { state: 'visible', timeout: 60000 });
+    await this.page.fill(this.passwordInput, password);
+
+    await this.page.click(this.loginButton);
   }
 }
