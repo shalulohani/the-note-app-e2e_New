@@ -25,13 +25,10 @@ jobs:
       - name: Install wait-on
         run: npm install -g wait-on
 
-      - name: Build React app
-        run: npm run build
-
-      - name: Start server and run Playwright tests
+      - name: Start Dev Server and Run Playwright Tests
         run: |
-          npx serve -s build -l 3001 &
-          wait-on http://localhost:3001
+          npm start &
+          wait-on http://localhost:3000
           npx playwright test
 
       - name: Upload Playwright HTML Report
