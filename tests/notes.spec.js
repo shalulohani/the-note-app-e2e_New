@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
-const { LoginPage } = require('./helpers/appPages/LoginPage');
-const { NotesPage } = require('./helpers/appPages/NotesPage');
+const { LoginPage } = require('./helpers/pages/LoginPage');
+const { NotesPage } = require('./helpers/pages/NotesPage');
 
 test('User should be able to edit the first note', async ({ page }) => {
   const loginPage = new LoginPage(page);
