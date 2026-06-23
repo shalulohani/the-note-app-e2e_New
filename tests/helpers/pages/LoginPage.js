@@ -1,23 +1,22 @@
-// tests/helpers/pages/LoginPage.js
-export class LoginPage {
+class LoginPage {
   constructor(page) {
-    this.page = page;
-    this.emailInput = 'input[name="email"]';
-    this.passwordInput = 'input[name="password"]';
-    this.loginButton = 'button[type="submit"]';
+    this.page = page; // ✅ store the page reference
+    this.emailInput = page.locator('input[name="email"]'); // ✅ missing earlier
+    this.passwordInput = page.locator('input[name="password"]');
+    this.loginButton = page.locator('button[type="submit"]');
   }
 
   async goto() {
-    await this.page.goto('/');
+    // Ensure this matches your frontend port
+    await this.page.goto('http://localhost:3000/login');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async login(email, password) {
-    await this.page.waitForSelector(this.emailInput, { state: 'visible', timeout: 60000 });
-    await this.page.fill(this.emailInput, email);
-
-    await this.page.waitForSelector(this.passwordInput, { state: 'visible', timeout: 60000 });
-    await this.page.fill(this.passwordInput, password);
-
-    await this.page.click(this.loginButton);
+    await this.emailInput.fill(email);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
   }
 }
+
+module.exports = { LoginPage };

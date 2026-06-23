@@ -1,33 +1,36 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Login() {
+export default function Login() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    const savedUser = JSON.parse(localStorage.getItem("user"));
+  const handleLogin = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
 
-    if (!savedUser) {
-      alert("No user found. Please register first.");
-      return;
-    }
+      if (!response.ok) {
+        alert("Invalid email or password");
+        return;
+      }
 
-    // ✅ Email validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-      alert("Please enter a valid email address.");
-      return;
-    }
+      const data = await response.json();
 
-    // ✅ Check credentials
-    if (savedUser.email === email && savedUser.password === password) {
+      // Save user session (token + user info)
+      localStorage.setItem("user", JSON.stringify(data));
+
       alert("Login successful");
       navigate("/notes");
-    } else {
-      alert("Invalid email or password");
+
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Login failed. Server not reachable.");
     }
   };
 
@@ -62,11 +65,11 @@ function Login() {
         style={{
           width: "100%",
           padding: "10px",
-          backgroundColor: "#28a745",
-          color: "white",
+          backgroundColor: "#007bff",
+          color: "#fff",
           border: "none",
-          cursor: "pointer",
-          borderRadius: "6px",
+          borderRadius: "4px",
+          cursor: "pointer"
         }}
       >
         Login
@@ -75,4 +78,3 @@ function Login() {
   );
 }
 
-export default Login;

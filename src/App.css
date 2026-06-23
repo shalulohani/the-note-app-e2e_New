@@ -1,38 +1,88 @@
-.App {
+/* === Global Reset === */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f7f9fc;
+}
+
+/* === Login Page Styles === */
+.login-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 320px;
   text-align: center;
+  margin: 5rem auto;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.login-container h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.login-container input {
+  width: 90%;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.login-container button {
+  width: 95%;
+  padding: 0.7rem;
+  background-color: #0078d4;
   color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
 }
 
-.App-link {
-  color: #61dafb;
+.login-container button:hover {
+  background-color: #005fa3;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* === Notes Page Styles === */
+.notes-container {
+  width: 80%;
+  margin: 2rem auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.notes-container h2 {
+  color: #0078d4;
+  margin-bottom: 1rem;
+}
+
+.notes-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.notes-container li {
+  background: #f0f4f8;
+  margin-bottom: 0.8rem;
+  padding: 1rem;
+  border-radius: 6px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+/* === Buttons (General) === */
+button {
+  transition: background-color 0.2s ease;
+}
+
+/* === Utility Classes === */
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "start": "react-scripts start",
+    "test:e2e": "npx playwright test --ui"
+  }
+}
