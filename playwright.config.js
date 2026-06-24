@@ -1,10 +1,10 @@
-import { defineConfig } from '@playwright/test';
+const { defineConfig } = require('@playwright/test');
 
-export default defineConfig({
+module.exports = defineConfig({
   testDir: './e2e',
 
   use: {
-    headless: true,                     // 🔥 REQUIRED for GitHub Actions
+    headless: true,                     // 🔥 Required for GitHub Actions
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
     video: 'off',
@@ -15,6 +15,6 @@ export default defineConfig({
     command: 'npm start',
     port: 3000,
     timeout: 120 * 1000,
-    reuseExistingServer: !process.env.CI, // Reuse server locally, fresh server in CI
+    reuseExistingServer: !process.env.CI,  // Reuse locally, fresh server in CI
   },
 });
