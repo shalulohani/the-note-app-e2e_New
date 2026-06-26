@@ -1,4 +1,4 @@
-name: Playwright CI
+name: Playwright Tests
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -20,37 +20,25 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm install
-
-      - name: Install wait-on and serve
-        run: npm install -g wait-on serve
+        run: npm ci
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Build React App
-        run: npm run build
-
-      - name: Start Frontend (Production)
+      - name: Start backend (API/DB)
         run: |
-          nohup serve -s build -l 3000 > frontend.log 2>&1 &
-        shell: bash
-
-      - name: Start Backend
-        run: |
-          cd mock-backend
-          nohup node server.js > backend.log 2>&1 &
-        shell: bash
-
-      - name: Wait for servers
-        run: |
-          wait-on http://localhost:3000
-          wait-on http://localhost:5000
+          npm run start:test &
+          npx wait-on http://localhost:3000
+        # adjust port/command to match your backend
 
       - name: Run Playwright Tests
-        run: npx playwright test
+        env:
+          TEST_USER: ${{ secrets.TEST_USER }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+        run: npx playwright test --trace on --reporter=html
 
       - name: Upload Playwright Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report

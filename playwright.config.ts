@@ -9,8 +9,8 @@ export default defineConfig({
   ],
 
   use: {
-    // ⭐ Backend runs on port 5000
-    baseURL: 'http://localhost:5000',
+    // ⭐ Correct frontend port
+    baseURL: 'http://localhost:3000',
 
     headless: true,
     viewport: { width: 1280, height: 720 },
