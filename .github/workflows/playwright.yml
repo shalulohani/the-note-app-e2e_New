@@ -22,6 +22,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install JSON Server
+        run: npm install -g json-server
+
+      - name: Start Mock Backend
+        run: |
+          nohup json-server --watch db.json --port 5000 &
+        working-directory: mock-backend
+
       - name: Prepare environment for Playwright
         run: |
           sudo apt-get update
