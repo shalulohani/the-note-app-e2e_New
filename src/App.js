@@ -1,14 +1,18 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './Login';
-import Notes from './Notes';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-export default function App() {
+import Login from "./Login";   // Login.js directly under src
+import Notes from "./Notes";   // Notes.js directly under src
+
+function App() {
   return (
-    <Routes>
-      {/* Redirect root path to /login */}
-      <Route path="/" element={<Navigate to="/login" />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/notes" element={<Notes />} />
-    </Routes>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/notes" element={<Notes />} />
+      </Routes>
+    </Router>
   );
 }
+
+export default App;

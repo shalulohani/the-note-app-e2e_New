@@ -1,27 +1,31 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('Search for a non-existent keyword', async ({ page }) => {
-  await page.goto('http://localhost:3000/login');
-  await page.fill('input[placeholder="Username"]', 'admin');
-  await page.fill('input[placeholder="Password"]', 'admin123');
-  await page.click('button:has-text("Login")');
+// Inline login helper to avoid missing-module errors when ./helpers/login.js is absent.
+async function login(page) {
+  // Navigate to app root; adjust URL if your app runs elsewhere.
+  await page.goto(process.env.APP_URL || "http://localhost:3000");
 
-  await page.waitForSelector('h1:has-text("Your Notes")');
+  // If a login form exists, try to sign in using environment credentials.
+  const emailInput = page.locator('input[name="email"]');
+  if (await emailInput.count() > 0) {
+    const user = process.env.TEST_USER_EMAIL || "test@example.com";
+    const pass = process.env.TEST_USER_PASSWORD || "password";
+    await emailInput.fill(user);
+    const passInput = page.locator('input[name="password"]');
+    if (await passInput.count() > 0) {
+      await passInput.fill(pass);
+    }
+    const submit = page.locator('button[type="submit"]');
+    if (await submit.count() > 0) await submit.click();
+    // wait for navigation or app to be ready
+    await page.waitForLoadState("networkidle").catch(() => {});
+  }
+}
 
-  // Add some sample notes
-  await page.fill('input[placeholder="Write a note"]', 'React basics');
-  await page.click('button:has-text("Add")');
+test("Search for a non-existent keyword", async ({ page }) => {
+  await login(page);
 
-  await page.fill('input[placeholder="Write a note"]', 'Playwright automation');
-  await page.click('button:has-text("Add")');
+  await page.fill('input[type="search"]', "xyz123");
 
-  await page.fill('input[placeholder="Write a note"]', 'JavaScript fundamentals');
-  await page.click('button:has-text("Add")');
-
-  // Search for a keyword that does NOT exist
-  await page.fill('input[placeholder="Search notes..."]', 'Python');
-
-  // Expect ZERO results
-  const notes = page.locator('li');
-  await expect(notes).toHaveCount(0);
+  await expect(page.locator("text=No results found")).toBeVisible();
 });

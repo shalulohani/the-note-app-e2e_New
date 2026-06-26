@@ -8,7 +8,7 @@ export default function Notes() {
 
   // Load notes from backend
   const fetchNotes = async () => {
-    const response = await fetch("http://localhost:4000/notes");
+    const response = await fetch("http://localhost:5000/notes");
     const data = await response.json();
     setNotes(data);
   };
@@ -21,7 +21,7 @@ export default function Notes() {
   const addNote = async () => {
     if (!newNote.trim()) return;
 
-    const response = await fetch("http://localhost:4000/notes", {
+    const response = await fetch("http://localhost:5000/notes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: newNote })
@@ -41,7 +41,7 @@ export default function Notes() {
 
   // Save edited note
   const saveEdit = async (id) => {
-    const response = await fetch(`http://localhost:4000/notes/${id}`, {
+    const response = await fetch(`http://localhost:5000/notes/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: editingText })
@@ -56,7 +56,7 @@ export default function Notes() {
 
   // Delete note
   const deleteNote = async (id) => {
-    const response = await fetch(`http://localhost:4000/notes/${id}`, {
+    const response = await fetch(`http://localhost:5000/notes/${id}`, {
       method: "DELETE"
     });
 
@@ -68,35 +68,78 @@ export default function Notes() {
   return (
     <div style={{ maxWidth: "500px", margin: "0 auto", marginTop: "40px" }}>
       <h2>Notes</h2>
+
       <div>
         <input
           type="text"
           value={newNote}
           onChange={(e) => setNewNote(e.target.value)}
           placeholder="New note"
-          style={{ width: "100%", padding: "8px", marginBottom: "8px", boxSizing: "border-box" }}
+          style={{
+            width: "100%",
+            padding: "8px",
+            marginBottom: "8px",
+            boxSizing: "border-box"
+          }}
         />
-        <button onClick={addNote} style={{ padding: "8px 12px" }}>Add Note</button>
+        <button onClick={addNote} style={{ padding: "8px 12px" }}>
+          Add Note
+        </button>
       </div>
+
       <ul style={{ listStyle: "none", padding: 0, marginTop: "24px" }}>
         {notes.map((note) => (
-          <li key={note.id} style={{ marginBottom: "16px", border: "1px solid #ccc", padding: "12px", borderRadius: "4px" }}>
+          <li
+            key={note.id}
+            className="note-item"
+            style={{
+              marginBottom: "16px",
+              border: "1px solid #ccc",
+              padding: "12px",
+              borderRadius: "4px"
+            }}
+          >
             {editingId === note.id ? (
               <div>
                 <input
                   type="text"
                   value={editingText}
                   onChange={(e) => setEditingText(e.target.value)}
-                  style={{ width: "100%", padding: "8px", boxSizing: "border-box", marginBottom: "8px" }}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    boxSizing: "border-box",
+                    marginBottom: "8px"
+                  }}
                 />
-                <button onClick={() => saveEdit(note.id)} style={{ padding: "8px 12px", marginRight: "8px" }}>Save</button>
-                <button onClick={() => setEditingId(null)} style={{ padding: "8px 12px" }}>Cancel</button>
+                <button
+                  onClick={() => saveEdit(note.id)}
+                  style={{ padding: "8px 12px", marginRight: "8px" }}
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setEditingId(null)}
+                  style={{ padding: "8px 12px" }}
+                >
+                  Cancel
+                </button>
               </div>
             ) : (
               <div>
                 <p style={{ margin: "0 0 8px" }}>{note.text}</p>
-                <button onClick={() => startEdit(note)} style={{ padding: "8px 12px", marginRight: "8px" }}>Edit</button>
-                <button onClick={() => deleteNote(note.id)} style={{ padding: "8px 12px" }}>Delete</button>
+                <button
+                  onClick={() => startEdit(note)}
+                  style={{ padding: "8px 12px", marginRight: "8px" }}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => deleteNote(note.id)}
+                  style={{ padding: "8px 12px" }}
+                >
+                  Delete
+                </button>
               </div>
             )}
           </li>

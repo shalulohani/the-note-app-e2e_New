@@ -4,28 +4,25 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://localhost:4000/login", {
+      const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ username, password })
       });
 
       if (!response.ok) {
-        alert("Invalid email or password");
+        alert("Invalid username or password");
         return;
       }
 
       const data = await response.json();
-
-      // Save user session (token + user info)
       localStorage.setItem("user", JSON.stringify(data));
 
-      alert("Login successful");
       navigate("/notes");
 
     } catch (error) {
@@ -39,12 +36,12 @@ export default function Login() {
       <h2>Login</h2>
 
       <div style={{ marginBottom: "15px" }}>
-        <label>Email</label>
+        <label>Username</label>
         <input
-          type="email"
-          placeholder="Enter email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           style={{ width: "100%", padding: "8px" }}
         />
       </div>
@@ -53,7 +50,7 @@ export default function Login() {
         <label>Password</label>
         <input
           type="password"
-          placeholder="Enter password"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           style={{ width: "100%", padding: "8px" }}
@@ -77,4 +74,3 @@ export default function Login() {
     </div>
   );
 }
-

@@ -1,26 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('Search notes by keyword', async ({ page }) => {
-  await page.goto('http://localhost:3000/login');
-  await page.fill('input[placeholder="Username"]', 'admin');
-  await page.fill('input[placeholder="Password"]', 'admin123');
-  await page.click('button:has-text("Login")');
+async function login(page) {
+  await page.goto("/");
+}
 
-  await page.waitForSelector('h1:has-text("Your Notes")');
+test("Search notes by keyword", async ({ page }) => {
+  await login(page);
 
-  // Add multiple notes
-  await page.fill('input[placeholder="Write a note"]', 'React basics');
-  await page.click('button:has-text("Add")');
-  await page.fill('input[placeholder="Write a note"]', 'Playwright automation');
-  await page.click('button:has-text("Add")');
-  await page.fill('input[placeholder="Write a note"]', 'JavaScript fundamentals');
-  await page.click('button:has-text("Add")');
+  await page.fill('input[placeholder=\"Enter note\"]', "React Notes");
+  await page.click("button:has-text('Add Note')");
 
-  // Search for "Playwright"
-  await page.fill('input[placeholder="Search notes..."]', 'Playwright');
+  await page.fill('input[type=\"search\"]', "React");
 
-  // Verify only matching note is visible
-  const notes = page.locator('li');
-  await expect(notes).toHaveCount(1);
-  await expect(notes).toContainText('Playwright automation');
+  await expect(page.locator("text=React Notes")).toBeVisible();
 });

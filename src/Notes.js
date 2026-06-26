@@ -1,74 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import './Notes.css';
 
-export default function Notes() {
+function Notes() {
+  const [note, setNote] = useState('');
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState('');
-  const [editIndex, setEditIndex] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [search, setSearch] = useState('');
 
-  const handleAddOrUpdateNote = () => {
-    if (newNote.trim() === '') return;
+  // Load notes from localStorage when component mounts
+  useEffect(() => {
+    const savedNotes = JSON.parse(localStorage.getItem('notes')) || [];
+    setNotes(savedNotes);
+  }, []);
 
-    if (editIndex !== null) {
-      const updatedNotes = [...notes];
-      updatedNotes[editIndex] = newNote;
-      setNotes(updatedNotes);
-      setEditIndex(null);
-    } else {
-      setNotes([...notes, newNote]);
-    }
+  // Save notes to localStorage whenever notes change
+  useEffect(() => {
+    localStorage.setItem('notes', JSON.stringify(notes));
+  }, [notes]);
 
-    setNewNote('');
+  const addNote = () => {
+    if (note.trim() === '') return;
+    setNotes([...notes, note]);
+    setNote('');
   };
 
-  const handleEditNote = (index) => {
-    setNewNote(notes[index]);
-    setEditIndex(index);
+  const deleteNote = (index) => {
+    const updatedNotes = notes.filter((_, i) => i !== index);
+    setNotes(updatedNotes);
   };
 
-  const handleDeleteNote = (index) => {
-    setNotes(notes.filter((_, i) => i !== index));
-  };
-
-  // Filter notes by search term
-  const filteredNotes = notes.filter((note) =>
-    note.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter notes based on search term
+  const filteredNotes = notes.filter((n) =>
+    n.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div>
-      <h1>Your Notes</h1>
+    <div className="notes-container">
+      <h2 className="notes-title">Notes</h2>
 
-      {/* 🔍 Search bar */}
+      {/* Add Note Section */}
+      <div>
+        <input
+          className="notes-input"
+          type="text"
+          placeholder="Enter note"
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+        />
+        <button className="add-btn" onClick={addNote}>
+          Add Note
+        </button>
+      </div>
+
+      {/* Search Bar */}
       <input
+        className="notes-search"
         type="text"
         placeholder="Search notes..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ marginBottom: '1rem', width: '70%' }}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
       />
 
-      <br />
-
-      <input
-        placeholder="Write a note"
-        value={newNote}
-        onChange={(e) => setNewNote(e.target.value)}
-      />
-
-      <button onClick={handleAddOrUpdateNote}>
-        {editIndex !== null ? 'Update' : 'Add'}
-      </button>
-
-      <ul>
-        {filteredNotes.map((note, index) => (
-          <li key={index}>
-            {note}
-            <button onClick={() => handleEditNote(index)}>Edit</button>
-            <button onClick={() => handleDeleteNote(index)}>Delete</button>
+      {/* Notes List */}
+      <ul className="notes-list">
+        {filteredNotes.map((n, i) => (
+          <li key={i} className="note-item">
+            {n}
+            <button className="delete-btn" onClick={() => deleteNote(i)}>
+              Delete
+            </button>
           </li>
         ))}
       </ul>
     </div>
   );
 }
+
+export default Notes;
