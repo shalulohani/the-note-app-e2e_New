@@ -6,11 +6,5 @@
       "password": "admin"
     }
   ],
-  "notes": [
-    {
-      "id": 101,
-      "title": "Welcome Note",
-      "content": "This is your first note."
-    }
-  ]
+  "notes": []
 }

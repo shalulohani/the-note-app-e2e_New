@@ -1,15 +1,19 @@
 import { test, expect } from "@playwright/test";
 
-test("API Login - Valid Credentials", async ({ request }) => {
-  const response = await request.post("http://localhost:5000/login", {
-    data: {
-      username: "admin",
-      password: "admin123"
-    }
-  });
+test("UI Login - Valid Credentials", async ({ page }) => {
+  // Open the React app
+  await page.goto("http://localhost:3000");
 
-  expect(response.ok()).toBeTruthy();
+  // Fill correct fields matching your frontend placeholders
+  await page.fill('input[placeholder="Enter email"]', "admin");
+  await page.fill('input[placeholder="Enter password"]', "admin");
 
-  const body = await response.json();
-  expect(body.message).toBe("Login successful");
+  // Click login and wait for redirect
+  await Promise.all([
+    page.waitForURL("http://localhost:3000/notes"),
+    page.click('button[type="submit"]')
+  ]);
+
+  // Verify Notes page loaded
+  await expect(page.locator("h2")).toContainText("Notes");
 });

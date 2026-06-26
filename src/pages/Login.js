@@ -1,76 +1,61 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
 
-  const handleLogin = async () => {
     try {
       const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({
+          username: email,   // ⭐ IMPORTANT: backend expects "username"
+          password: password
+        })
       });
 
-      if (!response.ok) {
-        alert("Invalid username or password");
-        return;
-      }
-
       const data = await response.json();
-      localStorage.setItem("user", JSON.stringify(data));
 
-      navigate("/notes");
-
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Login failed. Server not reachable.");
+      if (response.ok) {
+        navigate("/notes");   // ⭐ Redirect after successful login
+      } else {
+        setError(data.message || "Invalid credentials");
+      }
+    } catch (err) {
+      setError("Server not reachable");
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", marginTop: "50px" }}>
+    <div className="login-container">
       <h2>Login</h2>
 
-      <div style={{ marginBottom: "15px" }}>
-        <label>Username</label>
+      <form onSubmit={handleLogin}>
         <input
           type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={{ width: "100%", padding: "8px" }}
+          placeholder="Enter email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
-      </div>
 
-      <div style={{ marginBottom: "15px" }}>
-        <label>Password</label>
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Enter password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ width: "100%", padding: "8px" }}
         />
-      </div>
 
-      <button
-        onClick={handleLogin}
-        style={{
-          width: "100%",
-          padding: "10px",
-          backgroundColor: "#007bff",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer"
-        }}
-      >
-        Login
-      </button>
+        <button type="submit">Login</button>
+      </form>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }

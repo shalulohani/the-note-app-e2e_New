@@ -1,15 +1,14 @@
 const { test, expect } = require("@playwright/test");
 
 test("Login and load Notes page", async ({ page }) => {
-
-  // 1. Login API call
+  // 1. Login via API
   const response = await page.request.post("http://localhost:5000/login", {
-    data: { username: "admin", password: "admin123" }
+    data: { username: "admin", password: "admin" } // ✅ Correct credentials
   });
   expect(response.status()).toBe(200);
   const userData = await response.json();
 
-  // 2. Set localStorage BEFORE page loads
+  // 2. Inject user data before page load
   await page.addInitScript((user) => {
     window.localStorage.setItem("user", JSON.stringify(user));
   }, userData);
@@ -20,17 +19,16 @@ test("Login and load Notes page", async ({ page }) => {
   // 4. Confirm heading
   await expect(page.locator("h2")).toHaveText("Notes");
 
-  // 5. Wait for Notes page to load
-  await page.waitForSelector('input[placeholder="Enter note"]', { state: "visible", timeout: 10000 });
-  await page.waitForSelector('button:has-text("Add Note")', { state: "visible", timeout: 10000 });
+  // 5. Wait for elements
+  await page.waitForSelector('input[placeholder="Enter note"]', { state: "visible" });
+  await page.waitForSelector('button:has-text("Add Note")', { state: "visible" });
 
-  // 6. Add a note to make list visible
+  // 6. Add a note
   await page.fill('input[placeholder="Enter note"]', "Playwright test note");
   await page.click('button:has-text("Add Note")');
 
-  // 7. Wait for first note to appear
+  // 7. Verify note appears
   const firstNote = page.locator("li").first();
-  await firstNote.waitFor({ state: "visible", timeout: 10000 });
+  await firstNote.waitFor({ state: "visible" });
   await expect(firstNote).toBeVisible();
-
 });

@@ -1,49 +1,49 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
 
 function Login() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (email === 'test@example.com' && password === '123456') {
-      navigate('/notes');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    const response = await fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: email,   // backend expects "username"
+        password: password // backend expects "password"
+      })
+    });
+
+    if (response.status === 200) {
+      const user = await response.json();
+      localStorage.setItem("user", JSON.stringify(user));
+      window.location.href = "/notes"; // redirect
     } else {
-      setError('Invalid credentials');
+      alert("Invalid credentials");
     }
   };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+    <div>
       <h2>Login</h2>
+      <form onSubmit={handleLogin}>
+        <input
+          placeholder="Enter email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-      <input
-        id="email"
-        type="text"
-        placeholder="Enter email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+        <input
+          placeholder="Enter password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-      <br /><br />
-
-      <input
-        id="password"
-        type="password"
-        placeholder="Enter password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-      <br /><br />
-
-      <button id="loginBtn" onClick={handleLogin}>
-        Login
-      </button>
-
-      {error && <p id="errorMsg">{error}</p>}
+        <button type="submit">Login</button>
+      </form>
     </div>
   );
 }
