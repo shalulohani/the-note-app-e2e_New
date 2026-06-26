@@ -22,21 +22,24 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install wait-on
-        run: npm install -g wait-on
+      - name: Install wait-on and serve
+        run: npm install -g wait-on serve
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+
+      - name: Build React App
+        run: npm run build
+
+      - name: Start Frontend (Production)
+        run: |
+          nohup serve -s build -l 3000 > frontend.log 2>&1 &
+        shell: bash
 
       - name: Start Backend
         run: |
           cd mock-backend
           nohup node server.js > backend.log 2>&1 &
-        shell: bash
-
-      - name: Start Frontend
-        run: |
-          nohup npm start --prefix . > frontend.log 2>&1 &
         shell: bash
 
       - name: Wait for servers
