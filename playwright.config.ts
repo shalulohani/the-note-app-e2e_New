@@ -9,7 +9,7 @@ export default defineConfig({
   ],
 
   use: {
-    // ⭐ Your backend runs on port 5000
+    // ⭐ Backend runs on port 5000
     baseURL: 'http://localhost:5000',
 
     headless: true,
