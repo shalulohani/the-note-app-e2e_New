@@ -5,5 +5,8 @@
     "build": "react-scripts build",
     "test": "playwright test",
     "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "json-server": "^0.17.4"
   }
 }
