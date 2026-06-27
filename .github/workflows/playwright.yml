@@ -25,10 +25,14 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      # Start React App
-      - name: Start React App
+      # Build React App
+      - name: Build React App
+        run: npm run build
+
+      # Serve React App (production mode)
+      - name: Serve React App
         run: |
-          npm start &
+          npx serve -s build -l 3000 &
           npx wait-on http://localhost:3000
 
       # Start JSON Server backend
