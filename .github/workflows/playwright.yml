@@ -2,9 +2,9 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   test:
@@ -14,40 +14,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Install JSON Server
-        run: npm install -g json-server
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
-      - name: Start Mock Backend
+      # Start React App
+      - name: Start React App
         run: |
-          nohup json-server --watch db.json --port 5000 &
-        working-directory: mock-backend
+          npm start &
+          npx wait-on http://localhost:3000
 
-      - name: Prepare environment for Playwright
+      # Start JSON Server backend
+      - name: Start JSON Server
         run: |
-          sudo apt-get update
-          sudo apt-get install -y xvfb
-          npx playwright install --with-deps
+          npx json-server --watch db.json --port 3001 &
+          npx wait-on http://localhost:3001
 
-      - name: Run Playwright tests with Xvfb
-        run: |
-          xvfb-run --auto-servernum --server-args='-screen 0 1280x720x24' bash -c "npx playwright test --reporter=html"
+      - name: Run Playwright Tests
+        run: npx playwright test --trace on --reporter=html
 
-      - name: Upload HTML Report as Artifact
+      - name: Upload Playwright Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report
-
-      - name: Deploy HTML Report to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./playwright-report
